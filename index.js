@@ -1,14 +1,15 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
+app.use(bodyParser.json());
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'realcity_whats_2025';
 
-app.use(express.json());
+// healthcheck simples
+app.get('/', (req, res) => res.status(200).send('ok'));
 
-// Health check
-app.get('/', (_req, res) => res.status(200).send('ok'));
-
-// Verificação do webhook (GET)
+// GET /webhook (verificação)
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
@@ -21,13 +22,13 @@ app.get('/webhook', (req, res) => {
   return res.sendStatus(403);
 });
 
-// Recebimento de eventos (POST)
+// POST /webhook (eventos)
 app.post('/webhook', (req, res) => {
   console.log('Evento recebido:', JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
 
-// Cloud Run: PORT obrigatório + 0.0.0.0
+// Cloud Run precisa ouvir em 0.0.0.0 e PORT
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(Servidor ouvindo na porta ${PORT});
