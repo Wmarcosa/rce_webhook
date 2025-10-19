@@ -14,6 +14,8 @@ app.use(express.json());
  * Healthcheck — usado pelas sondagens do Cloud Run
  */
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
+app.head('/healthz', (_req, res) => res.status(200).send('ok'));
+
 
 /**
  * Endpoint raiz (opcional)
