@@ -1,13 +1,13 @@
 {
   "name": "rce_webhook",
   "version": "1.0.0",
-  "description": "Webhook do WhatsApp Cloud API com Node.js e Express",
+  "description": "Webhook do WhatsApp Cloud API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18.x"
   },
   "dependencies": {
     "express": "^4.18.2",
