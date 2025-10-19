@@ -6,10 +6,10 @@ app.use(bodyParser.json());
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'realcity_whats_2025';
 
-// healthcheck
+// healthcheck simples (Cloud Run testa isso)
 app.get('/', (req, res) => res.status(200).send('ok'));
 
-// verificação
+// Verificação do webhook (GET)
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
@@ -22,13 +22,13 @@ app.get('/webhook', (req, res) => {
   return res.sendStatus(403);
 });
 
-// eventos
+// Eventos do webhook (POST)
 app.post('/webhook', (req, res) => {
   console.log('Evento recebido:', JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
 
-// porta/host exigidos pelo Cloud Run
+// Cloud Run: ouvir em 0.0.0.0 na porta definida por PORT
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor ouvindo na porta ${PORT}`);
