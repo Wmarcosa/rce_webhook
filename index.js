@@ -5,25 +5,31 @@ const app = express();
 app.use(express.json());
 
 // Leia da variável de ambiente VERIFY_TOKEN
-const VERIFY_TOKEN = process.env.VERIFY_TOKEN || '';
+// index.js
+const express = require('express');
+const app = express();
+
+// Token de verificação do WhatsApp (definido no Cloud Run)
+const VERIFY_TOKEN =
+  process.env.WHATSAPP_VERIFY_TOKEN || // variável configurada no Cloud Run
+  'realcity_whats_2025';               // fallback local (apenas para teste)
+
+// Middleware para JSON
+app.use(express.json());
 
 /**
- * Healthcheck para passar no startup probe do Cloud Run
+ * Healthcheck — usado pelas sondagens do Cloud Run
  */
-app.get('/healthz', (_req, res) => {
-  res.status(200).send('ok');
-});
+app.get('/healthz', (_req, res) => res.status(200).send('ok'));
 
 /**
- * Endpoint básico raiz (opcional)
+ * Endpoint raiz (opcional)
  */
-app.get('/', (_req, res) => {
-  res.status(200).send('rce-webhook up');
-});
+app.get('/', (_req, res) => res.status(200).send('rce-webhook ativo'));
 
 /**
- * Verificação do Webhook do WhatsApp (GET)
- * Meta/Facebook envia: hub.mode, hub.verify_token, hub.challenge
+ * Verificação do webhook (GET)
+ * Meta envia: hub.mode, hub.verify_token, hub.challenge
  */
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
@@ -31,35 +37,43 @@ app.get('/webhook', (req, res) => {
   const challenge = req.query['hub.challenge'];
 
   if (!VERIFY_TOKEN) {
-    console.error('VERIFY_TOKEN não definido no ambiente.');
+    console.error('❌ VERIFY_TOKEN não definido no ambiente.');
     return res.status(500).send('VERIFY_TOKEN ausente');
   }
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('Webhook verificado com sucesso.');
+    console.log('✅ WEBHOOK_VERIFIED com sucesso.');
     return res.status(200).send(challenge);
-  } else {
-    console.warn('Falha na verificação do webhook.');
-    return res.sendStatus(403);
+  }
+
+  console.warn('⚠ Falha na verificação do webhook. Token inválido ou modo incorreto.');
+  return res.sendStatus(403);
+});
+
+/**
+ * Recebimento de eventos (POST)
+ */
+app.post('/webhook', (req, res) => {
+  try {
+    console.log('📩 Evento recebido:', JSON.stringify(req.body, null, 2));
+
+    // Exemplo opcional de leitura:
+    // const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+    // if (message?.text?.body) console.log('Mensagem recebida:', message.text.body);
+
+    res.sendStatus(200); // Ack rápido exigido pelo Meta
+  } catch (err) {
+    console.error('💥 Erro no handler /webhook:', err);
+    res.sendStatus(500);
   }
 });
 
 /**
- * Recebimento de eventos do WhatsApp (POST)
+ * Inicializa o servidor
  */
-app.post('/webhook', (req, res) => {
-  try {
-    const body = req.body;
-    console.log('Evento recebido:', JSON.stringify(body));
-
-    // TODO: trate mensagens aqui (messages, statuses, etc.)
-
-    // Confirme recebimento
-    res.sendStatus(200);
-  } catch (e) {
-    console.error('Erro no handler /webhook:', e);
-    res.sendStatus(500);
-  }
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(🚀 Servidor rodando na porta ${PORT});
 });
 
 const PORT = process.env.PORT || 8080;
