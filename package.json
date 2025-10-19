@@ -1,7 +1,7 @@
 {
   "name": "rce-webhook",
   "version": "1.0.0",
-  "description": "Webhook do WhatsApp rodando no Cloud Run",
+  "description": "Webhook do WhatsApp Business API rodando no Cloud Run",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
