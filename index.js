@@ -16,6 +16,9 @@ app.use(express.json());
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
 app.head('/healthz', (_req, res) => res.status(200).send('ok'));
 
+// (opcionais, mas úteis)
+app.get('/readyz', (_req, res) => res.status(200).send('ok'));
+app.get('/livez',  (_req, res) => res.status(200).send('ok'));
 
 /**
  * Endpoint raiz (opcional)
