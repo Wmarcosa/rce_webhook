@@ -1,12 +1,5 @@
 // index.js
 const express = require('express');
-
-const app = express();
-app.use(express.json());
-
-// Leia da variável de ambiente VERIFY_TOKEN
-// index.js
-const express = require('express');
 const app = express();
 
 // Token de verificação do WhatsApp (definido no Cloud Run)
@@ -56,11 +49,6 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', (req, res) => {
   try {
     console.log('📩 Evento recebido:', JSON.stringify(req.body, null, 2));
-
-    // Exemplo opcional de leitura:
-    // const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-    // if (message?.text?.body) console.log('Mensagem recebida:', message.text.body);
-
     res.sendStatus(200); // Ack rápido exigido pelo Meta
   } catch (err) {
     console.error('💥 Erro no handler /webhook:', err);
@@ -73,10 +61,5 @@ app.post('/webhook', (req, res) => {
  */
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(🚀 Servidor rodando na porta ${PORT});
-});
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`rce-webhook rodando na porta ${PORT}`);
+  console.log(`Servidor ouvindo na porta ${PORT}`);
 });
