@@ -1,12 +1,14 @@
 // index.js
 const express = require('express');
-const app = express();
+const bodyParser = require('body-parser');
 
+const app = express();
+app.use(bodyParser.json());
+
+// token de verificação do WhatsApp (ajuste no Cloud Run > Variáveis)
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'realcity_whats_2025';
 
-app.use(express.json());
-
-// healthcheck
+// healthcheck (Cloud Run usa para ver se o container subiu)
 app.get('/', (req, res) => res.status(200).send('ok'));
 
 // Verificação do webhook (GET)
@@ -28,7 +30,9 @@ app.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-// Porta exigida pelo Cloud Run
+// *** IMPORTANTE ***
+// Cloud Run injeta a porta certa em process.env.PORT.
+// Precisamos escutar em 0.0.0.0 e exatamente nessa porta.
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor ouvindo na porta ${PORT}`);
