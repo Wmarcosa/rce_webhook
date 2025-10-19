@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'realcity_whats_2035';
+const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'realcity_whats_2025';
 
 // health check
 app.get('/', (_req, res) => res.status(200).send('ok'));
