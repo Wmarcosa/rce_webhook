@@ -31,5 +31,5 @@ app.post('/webhook', (req, res) => {
 // Porta exigida pelo Cloud Run
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log('Servidor ouvindo na porta ${PORT}');
+  console.log(`Servidor ouvindo na porta ${PORT}`);
 });
