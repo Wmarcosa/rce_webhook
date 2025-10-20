@@ -23,25 +23,22 @@ app.get('/livez',  (_req, res) => res.status(200).send('ok'));
 /**
  * Endpoint raiz (opcional)
  */
-app.get('/', (_req, res) => res.status(200).send('rce-webhook ativo'));
-
-/**
- * Verificação do webhook (GET)
- * Meta envia: hub.mode, hub.verify_token, hub.challenge
- */
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  if (!VERIFY_TOKEN) {
+  if (!process.env.WHATSAPP_VERIFY_TOKEN) {
     console.error('❌ VERIFY_TOKEN não definido no ambiente.');
     return res.status(500).send('VERIFY_TOKEN ausente');
   }
 
-  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+  if (mode === 'subscribe' && token === process.env.WHATSAPP_VERIFY_TOKEN) {
     console.log('✅ WEBHOOK_VERIFIED com sucesso.');
     return res.status(200).send(challenge);
+  } else {
+    console.warn('❌ Verificação falhou.', { mode, token });
+    return res.sendStatus(403);
   }
 
   console.warn('⚠ Falha na verificação do webhook. Token inválido ou modo incorreto.');
