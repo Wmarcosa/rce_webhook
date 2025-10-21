@@ -24,9 +24,3 @@
   "private": true
 }
 
-{
-  "dependencies": {
-    "express": "^4.19.2",
-    "node-fetch": "^2.6.7"
-  }
-}
